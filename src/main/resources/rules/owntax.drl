@@ -1,0 +1,128 @@
+package rules
+
+import com.learning.drools.owntax.entity.Calculation
+
+rule "r1"
+
+    when
+    then
+        System.out.println("ok3333443");
+end
+
+// 第一类: 计算应纳税所得额
+// 第二类： 计算税
+// 第三类： 计算税后工资
+
+/**
+    private double wage; // 税前工资
+    private double wageMore;  // 应纳税所得额
+    private double cess;// 税率
+    private double preMinus; //速算扣除数
+    private double wageMinus; // 扣税额
+    private double actualWage; //税后工资
+*/
+rule "计算应纳税所得额"
+    salience 100
+    date-effective "2022-09-01"
+    no-loop true // 防止更改后发生死循环
+    when
+        $cal:Calculation(wage > 5000)
+    then
+        $cal.setWageMore($cal.getWage() - 3500);
+        update($cal); // 工作内存中更新
+end
+
+rule "设置税率，应纳税所得额 <= 1500"
+    salience 99
+    date-effective "2022-09-01"
+    activation-group "SetCessGroup" // 保证计算税率的规则只能有一个规则被触发
+    no-loop true
+    when
+        $cal:Calculation(wageMore > 0 && wageMore <= 1500)
+    then
+        $cal.setCess(0.03);
+        $cal.setPreMinus(0);
+        $cal.setWageMinus($cal.getWageMore() * $cal.getCess() - $cal.getPreMinus());
+        update($cal); // 工作内存中更新
+end
+
+rule "设置税率，应纳税所得额 <= 4500"
+        salience 98
+        date-effective "2022-09-01"
+        activation-group "SetCessGroup" // 保证计算税率的规则只能有一个规则被触发
+        no-loop true
+        when
+            $cal:Calculation(wageMore > 1500 && wageMore <= 4500)
+        then
+            $cal.setCess(0.1);
+            $cal.setPreMinus(105);
+            $cal.setWageMinus($cal.getWageMore() * $cal.getCess() - $cal.getPreMinus());
+            update($cal); // 工作内存中更新
+end
+
+rule "设置税率，应纳税所得额 <= 9000"
+        salience 97
+        date-effective "2022-09-01"
+        activation-group "SetCessGroup" // 保证计算税率的规则只能有一个规则被触发
+        no-loop true
+        when
+            $cal:Calculation(wageMore > 4500 && wageMore <= 9000)
+        then
+            $cal.setCess(0.2);
+            $cal.setPreMinus(555);
+            $cal.setWageMinus($cal.getWageMore() * $cal.getCess() - $cal.getPreMinus());
+            update($cal); // 工作内存中更新
+end
+
+rule "设置税率，应纳税所得额 <= 35000"
+        salience 96
+        date-effective "2022-09-01"
+        activation-group "SetCessGroup" // 保证计算税率的规则只能有一个规则被触发
+        no-loop true
+        when
+            $cal:Calculation(wageMore > 9000 && wageMore <= 35000)
+        then
+            $cal.setCess(0.25);
+            $cal.setPreMinus(1005);
+            $cal.setWageMinus($cal.getWageMore() * $cal.getCess() - $cal.getPreMinus());
+            update($cal); // 工作内存中更新
+end
+
+rule "设置税率，应纳税所得额 <= 55000"
+        salience 95
+        date-effective "2022-09-01"
+        activation-group "SetCessGroup" // 保证计算税率的规则只能有一个规则被触发
+        no-loop true
+        when
+            $cal:Calculation(wageMore > 35000 && wageMore <= 55000)
+        then
+            $cal.setCess(0.3);
+            $cal.setPreMinus(2755);
+            $cal.setWageMinus($cal.getWageMore() * $cal.getCess() - $cal.getPreMinus());
+            update($cal); // 工作内存中更新
+end
+
+rule "设置税率，应纳税所得额 <= 80000"
+        salience 94
+        date-effective "2022-09-01"
+        activation-group "SetCessGroup" // 保证计算税率的规则只能有一个规则被触发
+        no-loop true
+        when
+            $cal:Calculation(wageMore > 55000 && wageMore <= 80000)
+        then
+            $cal.setCess(0.5);
+            $cal.setPreMinus(5505);
+            $cal.setWageMinus($cal.getWageMore() * $cal.getCess() - $cal.getPreMinus());
+            update($cal); // 工作内存中更新
+end
+
+rule "计算税后工资"
+        salience 93
+        date-effective "2022-09-01"
+        no-loop true
+        when
+            $cal:Calculation(wage > 0)
+        then
+            $cal.setActualWage($cal.getWage() - $cal.getWageMinus());
+            update($cal); // 工作内存中更新
+end

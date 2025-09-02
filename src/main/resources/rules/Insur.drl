@@ -1,0 +1,113 @@
+package rules;
+//generated from Decision Table
+import com.learning.drools.owntax.entity.InsuranceInfo;
+global java.util.List listResults;
+// rule values at C13, header at C8
+rule "insuranceRule_13"
+	salience 65535
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insuranceCompany != "PICC")
+	then
+		listResults.add("保险公司不正确");
+end
+
+// rule values at C14, header at C8
+rule "insuranceRule_14"
+	salience 65534
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(saleRegion != "北京" || saleRegion != "天津")
+	then
+		listResults.add("销售区域不正确");
+end
+
+// rule values at C15, header at C8
+rule "insuranceRule_15"
+	salience 65533
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insuredAge < 18)
+	then
+		listResults.add("年龄小于18");
+end
+
+// rule values at C16, header at C8
+rule "insuranceRule_16"
+	salience 65532
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insurancePeriod in (20,25,30))
+	then
+		listResults.add("保险期间应该是：20，25，30年");
+end
+
+// rule values at C17, header at C8
+rule "insuranceRule_17"
+	salience 65531
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(payType != "趸交" || payType != "年缴")
+	then
+		listResults.add("缴费方式不对");
+end
+
+// rule values at C18, header at C8
+rule "insuranceRule_18"
+	salience 65530
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insurancePeriod != 20 ||  (payPeriod >= 10 || payType == "趸交"))
+	then
+		listResults.add("保险期与缴费期规则一：保险期间为20年，缴费期间最长10年缴费，且不能选择一次性交清");
+end
+
+// rule values at C19, header at C8
+rule "insuranceRule_19"
+	salience 65529
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insurancePeriod != 25 ||  (payPeriod >= 15 || payType == "趸交"))
+	then
+		listResults.add("保险期与缴费期规则一：保险期间为25年，缴费期间最长15年缴费，且不能选择一次性交清");
+end
+
+// rule values at C20, header at C8
+rule "insuranceRule_20"
+	salience 65528
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insurancePeriod != 30 ||  (payPeriod >= 20 || payType == "趸交"))
+	then
+		listResults.add("保险期与缴费期规则一：保险期间为30年，缴费期间最长21年缴费，且不能选择一次性交清");
+end
+
+// rule values at C21, header at C8
+rule "insuranceRule_21"
+	salience 65527
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insuredAge + insurancePeriod > 40)
+	then
+		listResults.add("被保人要求：（投保年龄 + 保险期间）不得大于40周岁");
+end
+
+// rule values at C22, header at C8
+rule "insuranceRule_22"
+	salience 65526
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insuranceQuota < 50000 || insuranceQuota - 50000 % 1000 != 0)
+	then
+		listResults.add("保险金额规则：投保时约定，最低5万元，超过的部分必须为1000元的整数倍");
+end
+
+// rule values at C23, header at C8
+rule "insuranceRule_23"
+	salience 65525
+	agenda-group "sign"
+	when
+		$insurance:InsuranceInfo(insuranceQuota > 625000)
+	then
+		listResults.add("出单基本保额限额规则：线上出单基本保额限额62.5万元，超过62.5万元需要配合转线下出单");
+end

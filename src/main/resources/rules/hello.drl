@@ -1,0 +1,9 @@
+package rules
+import com.learning.drools.owntax.entity.Person
+
+rule "hello"
+    when
+        $p:Person(age > 0, age in (23,3,22) && age + 10 > 23)
+    then
+        $p.setAddress("city");
+end

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: drool
+server:
+  port: 8080
+
+
+drools:
+  rulePath: "D:/Users/fei/gitrepo/owntax/src/main/resources/rules/credit.drl"

@@ -1,0 +1,115 @@
+package rules
+import com.learning.drools.owntax.entity.Person
+
+rule "hello"
+    when
+    then
+        System.out.println("hello world");
+end
+
+// 合法性检查
+rule "检查学历或薪水1"
+    salience 100
+    activation-group "credit_check"
+    no-loop true
+    when
+        $person:Person(!hasHouse && !hasCar && salary < 5000 && educationCode < 1)
+    then
+        $person.setHasCredit(false);
+        update($person)
+        drools.halt(); // 审核不通过直接退出
+end
+
+rule "检查学历或薪水2"
+    salience 99
+    activation-group "credit_check"
+    no-loop true
+    when
+        $person:Person(!hasHouse && !hasCar && salary < 3000 && (educationCode == 1 || educationCode == 2))
+    then
+        $person.setHasCredit(false);
+        update($person)
+        drools.halt(); // 审核不通过直接退出
+end
+
+rule "检查学历或薪水3"
+    salience 98
+    activation-group "credit_check"
+    no-loop true
+    when
+        $person:Person(!hasHouse && !hasCar && salary < 2000 && educationCode > 2 && creditCardNum <= 0)
+    then
+        $person.setHasCredit(false);
+        update($person)
+        drools.halt(); // 审核不通过直接退出
+end
+
+rule "检查学历或薪水4"
+    salience 97
+    activation-group "credit_check"
+    no-loop true
+    when
+        $person:Person(creditCardNum > 10)
+    then
+        $person.setHasCredit(false);
+        update($person)
+        drools.halt(); // 审核不通过直接退出
+end
+
+// 信用卡额度
+
+rule "信用卡额度规则1"
+    salience 90
+    activation-group "credit_quota"
+    no-loop true
+    when
+        $person:Person( hasCredit && (hasCar && hasHouse || salary > 20000) )
+    then
+        $person.setQuota(15000.0);
+        update($person)
+        System.out.println($person);
+end
+
+rule "信用卡额度规则2"
+    salience 89
+    activation-group "credit_quota"
+    no-loop true
+    when
+        $person:Person( hasCredit && (!hasCar && !hasHouse && (salary >= 10000 && salary <= 20000)) )
+    then
+        $person.setQuota(6000.0);
+        update($person)
+end
+
+rule "信用卡额度规则3"
+    salience 88
+    activation-group "credit_quota"
+    no-loop true
+    when
+        $person:Person( hasCredit && (!hasCar && !hasHouse && salary < 10000) )
+    then
+        $person.setQuota(3000.0);
+        update($person)
+end
+
+rule "信用卡额度规则4"
+    salience 87
+    activation-group "credit_quota"
+    no-loop true
+    when
+        $person:Person( hasCredit && (hasCar || hasHouse) && salary < 10000)
+    then
+        $person.setQuota(5000.0);
+        update($person)
+end
+
+rule "信用卡额度规则5"
+    salience 86
+    activation-group "credit_quota"
+    no-loop true
+    when
+        $person:Person( hasCredit && (hasCar || hasHouse) && ( salary > 10000 && salary <= 20000))
+    then
+        $person.setQuota(8000.0);
+        update($person)
+end
