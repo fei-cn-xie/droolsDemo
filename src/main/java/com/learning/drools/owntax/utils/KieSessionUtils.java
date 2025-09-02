@@ -42,7 +42,7 @@ public class KieSessionUtils {
         FileInputStream fileInputStream = new FileInputStream(file);
         SpreadsheetCompiler compiler = new SpreadsheetCompiler();
         String compile = compiler.compile(fileInputStream, InputType.XLS);
-        System.out.println(compile);
+        //System.out.println(compile);
 
         KieHelper kieHelper = new KieHelper();
 
